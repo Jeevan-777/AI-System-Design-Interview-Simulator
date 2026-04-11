@@ -33,11 +33,11 @@ function Dashboard() {
   };
 
   const handleStartInterview = () => {
-    window.location.href = "/design";
+  window.location.href = "/design?mode=interview";
   };
 
   const handleCustomProblem = () => {
-    alert("Next: Custom Problem Input 🚀");
+   window.location.href = "/design?mode=custom";
   };
 
   return (
@@ -62,10 +62,20 @@ function Dashboard() {
 
       <br /><br />
 
-    <button onClick={() => window.location.href = "/history"}>
+      <button onClick={() => window.location.href = "/history"}>
        View History
       </button>
       <br/><br/>
+
+      <button onClick={() => window.location.href = "/analytics"}>
+       View Analytics 📊
+     </button><br></br>
+
+     <button onClick={() => window.location.href = "/learning"}>
+       Learning Mode 📘
+     </button>
+     <br></br>
+
 
       <button onClick={handleLogout}>Logout</button>
     </div>

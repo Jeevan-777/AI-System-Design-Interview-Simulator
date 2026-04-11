@@ -4,11 +4,23 @@ function History() {
   const [designs, setDesigns] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/design/history")
-      .then((res) => res.json())
-      .then((data) => setDesigns(data))
-      .catch(() => alert("Failed to load history"));
-  }, []);
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    alert("Please login again");
+    return;
+  }
+
+  fetch("http://localhost:5000/api/design/history", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+    .then((res) => res.json())
+    .then((data) => setDesigns(data))
+    .catch(() => alert("Failed to load history"));
+}, []);
+   
 
   return (
     <div style={{ padding: "40px" }}>

@@ -21,6 +21,8 @@ function App() {
         });
 
         localStorage.setItem("token", res.data.token);
+        // ✅ SAVE USER (IMPORTANT FOR STEP 11)
+        localStorage.setItem("user", JSON.stringify(res.data.user));
         window.location.href = "/dashboard";
       } else {
         await register(form);
