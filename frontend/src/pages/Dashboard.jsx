@@ -76,8 +76,12 @@ function Dashboard() {
      </button>
      <br></br>
 
-
-      <button onClick={handleLogout}>Logout</button>
+     <button onClick={() => window.location.href = "/builder"}>
+        Architecture Builder 🧱
+     </button>
+     <br></br>
+     
+    <button onClick={handleLogout}>Logout</button>
     </div>
   );
 }

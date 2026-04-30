@@ -10,6 +10,7 @@ import Database from "./pages/learning/Database";
 import Cache from "./pages/learning/Cache";
 import Queue from "./pages/learning/Queue";
 import LearningHistory from "./pages/LearningHistory";
+import Builder from "./pages/Builder";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         <Route path="/learning/cache" element={<Cache />} />
         <Route path="/learning/queue" element={<Queue />} />
         <Route path="/learning-history" element={<LearningHistory />} />
+        <Route path="/builder" element={<Builder />} />
       </Routes>
     </BrowserRouter>
   );

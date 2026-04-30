@@ -19,10 +19,11 @@ function DesignInput() {
       hasGenerated.current = true;
 
       fetch("http://localhost:5000/api/design/generate-problem", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+       method: "GET",
+       headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
         .then((res) => res.json())
         .then((data) => {
           setProblem(data.problem);

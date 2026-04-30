@@ -3,6 +3,7 @@ const router = express.Router();
 const Design = require("../models/Design");
 const protect = require("../middleware/authMiddleware");
 const Learning = require("../models/Learning");
+const { saveQuizResult, getMe } = require("../controllers/designController");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -177,17 +178,17 @@ router.post("/explain-system", protect, async (req, res) => {
       model: "gemini-2.5-flash",
     });
 
-    const result = await model.generateContent(
-      `Explain the system design of ${system} in a simple and structured way.
+   const result = await model.generateContent(
+  `Explain the system design of ${system} in a simple and structured way.
 
-       Include:
-       - Key components
-       - Architecture overview
-       - How scaling is handled
-       - Simple explanation (for beginners)
+   Include:
+   - Key components
+   - Architecture overview
+   - How scaling is handled
+   - Simple explanation (for beginners)
 
-       Keep it concise and clear.`
-    );
+   Keep it concise and clear.`
+);
 
     const response = await result.response;
     const text = response.text();

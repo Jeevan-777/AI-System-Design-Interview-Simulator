@@ -23,19 +23,31 @@ function Learning() {
         body: JSON.stringify({ system }),
       });
 
+      if (!res.ok) {
+        const errorData = await res.json();
+        alert(errorData.message || "Error from server");
+        return;
+      }
+
       const data = await res.json();
       setResult(data.explanation);
-    } catch {
+    } catch (err) {
+      console.error(err);
       alert("Failed to fetch explanation");
     }
   };
 
-  // 🔥 SAVE FUNCTION (ADDED)
+  // 🔥 SAVE FUNCTION
   const handleSave = async () => {
     const token = localStorage.getItem("token");
 
+    if (!result) {
+      alert("Nothing to save");
+      return;
+    }
+
     try {
-      await fetch("http://localhost:5000/api/design/save-explanation", {
+      const res = await fetch("http://localhost:5000/api/design/save-explanation", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -47,8 +59,14 @@ function Learning() {
         }),
       });
 
+      if (!res.ok) {
+        alert("Save failed");
+        return;
+      }
+
       alert("Saved successfully ✅");
-    } catch {
+    } catch (err) {
+      console.error(err);
       alert("Failed to save");
     }
   };
@@ -57,7 +75,7 @@ function Learning() {
     <div style={{ padding: "40px", textAlign: "center" }}>
       <h1>System Design Learning 📘</h1>
 
-      {/* 🔥 AI Learning Assistant */}
+      {/* AI Learning */}
       <h2 style={{ marginTop: "30px" }}>AI Learning Assistant 🤖</h2>
 
       <input
@@ -72,7 +90,7 @@ function Learning() {
 
       <button onClick={handleExplain}>Explain</button>
 
-      {/* 🔹 Result + SAVE BUTTON */}
+      {/* Result */}
       {result && (
         <div style={{ marginTop: "20px", textAlign: "left" }}>
           <h3>Explanation</h3>
@@ -86,41 +104,65 @@ function Learning() {
         </div>
       )}
 
-      {/* 🔥 Topics */}
-      <h2 style={{ marginTop: "40px" }}>Select a Topic</h2>
+      {/* STEP 1 */}
+      <h2 style={{ marginTop: "40px" }}>Step 1: Learn Concepts</h2>
 
       <div style={{ marginTop: "20px" }}>
-        <button onClick={() => window.location.href = "/learning/load-balancer"}>
+        <button onClick={() => (window.location.href = "/learning/load-balancer")}>
           Load Balancer
         </button>
 
         <br /><br />
 
-        <button onClick={() => window.location.href = "/learning/database"}>
+        <button onClick={() => (window.location.href = "/learning/database")}>
           Database
         </button>
 
         <br /><br />
 
-        <button onClick={() => window.location.href = "/learning/cache"}>
+        <button onClick={() => (window.location.href = "/learning/cache")}>
           Cache (Redis)
         </button>
 
         <br /><br />
 
-        <button onClick={() => window.location.href = "/learning/queue"}>
+        <button onClick={() => (window.location.href = "/learning/queue")}>
           Message Queue
         </button>
       </div>
 
+      {/* STEP 2 */}
+      <h2 style={{ marginTop: "40px" }}>Step 2: Test Your Knowledge</h2>
+
+      <button onClick={() => (window.location.href = "/learning/quiz")}>
+        Take Quiz
+      </button>
+
+      {/* STEP 3 */}
+      <h2 style={{ marginTop: "40px" }}>Step 3: System Design Levels</h2>
+
+      <button
+        onClick={() => {
+          const passed = localStorage.getItem("quizPassed");
+          if (passed === "true") {
+            window.location.href = "/levels";
+          } else {
+            alert("⚠️ Complete quiz first (minimum 50%)");
+          }
+        }}
+      >
+        Start Levels
+      </button>
+
       <br /><br />
 
-      <button onClick={() => window.location.href = "/learning-history"}>
+      <button onClick={() => (window.location.href = "/learning-history")}>
         View Saved Learnings 📚
       </button>
-      <br></br>
 
-      <button onClick={() => window.location.href = "/dashboard"}>
+      <br /><br />
+
+      <button onClick={() => (window.location.href = "/dashboard")}>
         Back to Dashboard
       </button>
     </div>
