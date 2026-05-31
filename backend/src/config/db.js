@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
+require("dotenv").config();
 
 const connectDB = async () => {
   try {
-    await mongoose.connect("mongodb://jeevanbm07_db_user:g0MP2dXfJMELfKxF@ac-eew2hqt-shard-00-00.wmxb3r0.mongodb.net:27017,ac-eew2hqt-shard-00-01.wmxb3r0.mongodb.net:27017,ac-eew2hqt-shard-00-02.wmxb3r0.mongodb.net:27017/ai-simulator?ssl=true&replicaSet=atlas-x14mjb-shard-0&authSource=admin&appName=Cluster0");
+    await mongoose.connect(process.env.MONGO_URL);
 
     console.log("MongoDB Connected Successfully");
   } catch (error) {
