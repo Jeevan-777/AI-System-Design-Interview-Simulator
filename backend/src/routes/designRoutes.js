@@ -1,10 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const Design = require("../models/Design");
+const User = require("../models/User");
 const protect = require("../middleware/authMiddleware");
 const Learning = require("../models/Learning");
 const { saveQuizResult, getMe } = require("../controllers/designController");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 console.log("ENV KEY:", process.env.GEMINI_API_KEY);
@@ -231,6 +233,169 @@ router.get("/learning-history", protect, async (req, res) => {
     res.json(data);
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch learning history" });
+  }
+});
+
+router.post("/ask-learning-ai", protect, async (req, res) => {
+  const { question, level } = req.body;
+
+  if (!question) {
+    return res.status(400).json({
+      message: "Question required",
+    });
+  }
+
+  try {
+    const model = genAI.getGenerativeModel({
+      model: "gemini-2.5-flash",
+    });
+
+    const result = await model.generateContent(
+      `
+      You are a friendly System Design tutor.
+
+      Student Level: ${level || "Beginner"}
+
+      Explain this clearly and simply:
+
+      ${question}
+
+      Rules:
+      - Use beginner-friendly language
+      - Give real-world examples
+      - Keep explanation structured
+      - Avoid overly advanced terms
+      - Keep answers short
+      `
+    );
+
+    const response = await result.response;
+    const text = response.text();
+
+    res.json({
+      answer: text,
+    });
+
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      message: "AI failed",
+    });
+  }
+});
+
+router.get("/progress", protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+
+    res.json({
+      unlockedLevel:
+        user.learningProgress?.unlockedLevel || 1,
+
+      completedLevels:
+        user.learningProgress?.completedLevels || [],
+    });
+
+  } catch (err) {
+    res.status(500).json({
+      message: "Failed to fetch progress",
+    });
+  }
+});
+
+
+router.post("/update-progress", protect, async (req, res) => {
+  const { unlockedLevel, completedLevel } = req.body;
+
+  try {
+    const user = await User.findById(req.user.id);
+
+    if (!user.learningProgress) {
+      user.learningProgress = {
+        unlockedLevel: 1,
+        completedLevels: [],
+      };
+    }
+
+    // Update highest unlocked level
+    if (
+      unlockedLevel >
+      user.learningProgress.unlockedLevel
+    ) {
+      user.learningProgress.unlockedLevel =
+        unlockedLevel;
+    }
+
+    // Add completed level
+    if (
+      completedLevel &&
+      !user.learningProgress.completedLevels.includes(
+        completedLevel
+      )
+    ) {
+      user.learningProgress.completedLevels.push(
+        completedLevel
+      );
+    }
+
+    await user.save();
+
+    res.json({
+      message: "Progress updated",
+      learningProgress: user.learningProgress,
+    });
+
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      message: "Failed to update progress",
+    });
+  }
+});
+
+router.post("/update-quiz-status", protect, async (req, res) => {
+  try {
+    const { quizPassed } = req.body;
+
+    const user = await User.findById(req.user.id);
+
+    user.quizPassed = quizPassed;
+
+    await user.save();
+
+    res.json({
+      message: "Quiz status updated",
+    });
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      message: "Failed to update quiz status",
+    });
+  }
+});
+
+router.get("/user-status", protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+
+    res.json({
+      quizPassed: user.quizPassed || false,
+
+      unlockedLevel:
+        user.learningProgress?.unlockedLevel || 1,
+
+      completedLevels:
+        user.learningProgress?.completedLevels || [],
+    });
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      message: "Failed to fetch user status",
+    });
   }
 });
 
