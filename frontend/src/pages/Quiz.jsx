@@ -14,13 +14,8 @@ function Quiz() {
     },
 
     {
-      question: "Which component stores persistent data?",
-      options: [
-        "Cache",
-        "Queue",
-        "Database",
-        "Load Balancer",
-      ],
+      question: "Which component will store persistent data?",
+      options: ["Cache", "Queue", "Database", "Load Balancer"],
       answer: "Database",
     },
 
@@ -71,7 +66,7 @@ function Quiz() {
   };
 
   // ✅ Submit quiz
-  const handleSubmit = async() => {
+  const handleSubmit = async () => {
     let correct = 0;
 
     questions.forEach((q, index) => {
@@ -86,20 +81,17 @@ function Quiz() {
     // ✅ Pass condition
     const token = localStorage.getItem("token");
 
-await fetch(
-  "http://localhost:5000/api/design/update-quiz-status",
-  {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({
-      quizPassed: correct >= 3,
-    }),
-  }
-  );
-};
+    await fetch("http://localhost:5000/api/design/update-quiz-status", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        quizPassed: correct >= 3,
+      }),
+    });
+  };
 
   return (
     <div
@@ -110,9 +102,7 @@ await fetch(
         padding: "40px",
       }}
     >
-      <h1 style={{ textAlign: "center" }}>
-        System Design Quiz 🧠
-      </h1>
+      <h1 style={{ textAlign: "center" }}>System Design Quiz 🧠</h1>
 
       <div
         style={{
@@ -149,9 +139,7 @@ await fetch(
                     name={`question-${qIndex}`}
                     value={option}
                     checked={answers[qIndex] === option}
-                    onChange={() =>
-                      handleOptionChange(qIndex, option)
-                    }
+                    onChange={() => handleOptionChange(qIndex, option)}
                     style={{ marginRight: "10px" }}
                   />
 
@@ -199,18 +187,12 @@ await fetch(
 
             {score >= 3 ? (
               <>
-                <h2 style={{ color: "#22c55e" }}>
-                  ✅ Passed!
-                </h2>
+                <h2 style={{ color: "#22c55e" }}>✅ Passed!</h2>
 
-                <p>
-                  Levels are now unlocked 🚀
-                </p>
+                <p>Levels are now unlocked 🚀</p>
 
                 <button
-                  onClick={() =>
-                    (window.location.href = "/levels")
-                  }
+                  onClick={() => (window.location.href = "/levels")}
                   style={{
                     marginTop: "20px",
                     padding: "12px 25px",
@@ -226,13 +208,9 @@ await fetch(
               </>
             ) : (
               <>
-                <h2 style={{ color: "#ef4444" }}>
-                  ❌ Failed
-                </h2>
+                <h2 style={{ color: "#ef4444" }}>❌ Failed</h2>
 
-                <p>
-                  Minimum 3/5 required to pass
-                </p>
+                <p>Minimum 3/5 required to pass</p>
 
                 <button
                   onClick={() => window.location.reload()}
@@ -251,12 +229,11 @@ await fetch(
               </>
             )}
 
-            <br /><br />
+            <br />
+            <br />
 
             <button
-              onClick={() =>
-                (window.location.href = "/learning")
-              }
+              onClick={() => (window.location.href = "/learning")}
               style={{
                 padding: "10px 20px",
                 background: "#374151",
